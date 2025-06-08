@@ -7,8 +7,10 @@ import androidx.compose.ui.unit.dp
 import android.view.Surface
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,27 +19,37 @@ import androidx.compose.ui.res.stringResource
 
 @Composable
 fun MainScreen(){
-    val navigationItems = listOf(NavigationItem.Home,NavigationItem.Profile, NavigationItem.Favourite)
-    Scaffold(
+   Scaffold(
         bottomBar = {
-            NavigationBar {
-                navigationItems.forEach {
+            NavigationBar (
+                containerColor = MaterialTheme.colorScheme.background,
+
+            ){
+                val navigationItems = listOf(NavigationItem.Home,NavigationItem.Profile, NavigationItem.Favourite)
+                val indexSelected = 0
+                navigationItems.forEachIndexed { index, item ->
                     NavigationBarItem(
-                        selected = true,
+                        selected = indexSelected == index,
                         onClick = {},
                         icon = {
                             Icon(
-                                imageVector = it.icon,
+                                imageVector = item.icon,
                                 contentDescription = ""
                             )
                         },
-                        label = { Text(text = stringResource( it.titleResId))}
+                        label = { Text(text = stringResource( item.titleResId))},
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                            selectedTextColor = MaterialTheme.colorScheme.onPrimary,
+                            unselectedIconColor = MaterialTheme.colorScheme.onSecondary,
+                            unselectedTextColor = MaterialTheme.colorScheme.onSecondary
+                        )
                     )
                 }
             }
         }
     ) { padding ->
-        Surface(modifier = Modifier.padding(padding)) {
+        Surface(modifier = Modifier.padding(padding), color = MaterialTheme.colorScheme.background) {
             Card()
         }
     }
