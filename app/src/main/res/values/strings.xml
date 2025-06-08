@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Vk</string>
+    <string name="ipsum">Lorem ipsum dolor sit amet, consecetur adipiscing elit</string>
+    <string name="resTitleIdHome">Главная</string>
+    <string name="resTitleIdProfile">Профиль</string>
+    <string name="resTitleIdFavourite">Избранное</string>
 </resources>

@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
                     .background(MaterialTheme.colorScheme.background)
                     .padding(8.dp)
                     ) {
-                    Card()
+                    MainScreen()
                 }
             }
         }
