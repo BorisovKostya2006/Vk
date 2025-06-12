@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun CardVk(modifier: Modifier){
+    val feedPost = FeedPost()
     Card (modifier = modifier,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.background
@@ -38,10 +39,10 @@ fun CardVk(modifier: Modifier){
         Column {
             Spacer(Modifier.height(12.dp))
             PostHeader()
-            Text(stringResource(R.string.ipsum),Modifier.padding(8.dp), color = MaterialTheme.colorScheme.onPrimary)
-            Image(painter = painterResource(R.drawable.kod), contentDescription = "", modifier = Modifier.fillMaxWidth())
+            Text(text = feedPost.contentText,Modifier.padding(8.dp), color = MaterialTheme.colorScheme.onPrimary)
+            Image(painter = painterResource(feedPost.contentImage), contentDescription = "", modifier = Modifier.fillMaxWidth())
             Spacer(Modifier.height(12.dp))
-            Statistics()
+            Statistics(feedPost.statisticItem)
             Spacer(Modifier.height(8.dp))
         }
     }
@@ -51,37 +52,47 @@ fun CardVk(modifier: Modifier){
 
 @Composable
 fun PostHeader(){
+    val feedPost = FeedPost()
     Row(modifier = Modifier
         .fillMaxWidth()
         .padding(start = 8.dp),
         verticalAlignment = Alignment.CenterVertically) {
-        Image(painter = painterResource(R.drawable.computer), contentDescription = "", modifier =  Modifier.size(50.dp).clip(
+        Image(painter = painterResource(feedPost.iconGroup), contentDescription = "", modifier =  Modifier.size(50.dp).clip(
             CircleShape
         ))
         Spacer(Modifier.width(8.dp))
         Column(
             modifier = Modifier.weight(1f)
         ) {
-            Text("/dev/null",color = MaterialTheme.colorScheme.onPrimary)
+            Text(feedPost.groupName,color = MaterialTheme.colorScheme.onPrimary)
             Spacer(modifier = Modifier.height(4.dp))
-            Text("14:00",color = MaterialTheme.colorScheme.onSecondary)
+            Text(feedPost.publicationTime,color = MaterialTheme.colorScheme.onSecondary)
         }
         Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary)
     }
 }
 @Composable
-fun Statistics(){
+fun Statistics(
+    statisticItem: List<StatisticItem>
+){
     Row {
+        val viewsItem = statisticItem.getItemType(StatisticType.VIEWS)
         Row(Modifier.weight(1f)) {
-            IconWitchText(R.drawable.view, text = "960")
+            IconWitchText(R.drawable.view, text = viewsItem.count.toString())
         }
+        val commentsItem = statisticItem.getItemType(StatisticType.COMMENTS)
+        val sharesItem = statisticItem.getItemType(StatisticType.SHARES)
+        val lakeItem = statisticItem.getItemType(StatisticType.LIKE)
         Row(Modifier.weight(1f), horizontalArrangement = Arrangement.SpaceBetween) {
-            IconWitchText(R.drawable.repost,text = "99")
-            IconWitchText(R.drawable.kommentar,text = "21")
-            IconWitchText(R.drawable.like, text = "23")
+            IconWitchText(R.drawable.repost,text = sharesItem.count.toString())
+            IconWitchText(R.drawable.kommentar,text = commentsItem.count.toString())
+            IconWitchText(R.drawable.like, text = lakeItem.count.toString())
         }
     }
 
+}
+private fun List<StatisticItem>.getItemType (type : StatisticType): StatisticItem{
+    return this.find{ it.type == type } ?: throw IllegalArgumentException()
 }
 @Composable
 fun IconWitchText(iconResId: Int, text : String){
