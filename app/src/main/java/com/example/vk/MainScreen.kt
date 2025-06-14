@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun MainScreen(){
-
+    val feedPost = remember { mutableStateOf(FeedPost()) }
 
    Scaffold(
         bottomBar = {
@@ -54,7 +54,21 @@ fun MainScreen(){
         }
     ) { padding ->
         Surface(modifier = Modifier.padding(padding), color = MaterialTheme.colorScheme.background) {
-            CardVk(Modifier.padding(8.dp))
+            PostCard(Modifier.padding(8.dp),feedPost= feedPost.value,
+                onItemStaticClickListener = {newItem ->
+                    val oldFeedPost = feedPost.value.statisticItem
+                    val newFeedPost = oldFeedPost.toMutableList().apply {
+                        replaceAll{oldItem ->
+                    if (oldItem.type == newItem.type){
+                        oldItem.copy(count= oldItem.count+1)
+                }else{
+                    oldItem
+                    }
+                    }
+                    }
+                    feedPost.value = feedPost.value.copy(statisticItem = newFeedPost)
+                })
         }
     }
     }
+
