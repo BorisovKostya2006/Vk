@@ -10,16 +10,17 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 
 @Composable
-fun MainScreen(){
-    val feedPost = remember { mutableStateOf(FeedPost()) }
-
+fun MainScreen(viewModel : MainViewModel){
    Scaffold(
         bottomBar = {
             NavigationBar (
@@ -54,21 +55,11 @@ fun MainScreen(){
         }
     ) { padding ->
         Surface(modifier = Modifier.padding(padding), color = MaterialTheme.colorScheme.background) {
-            PostCard(Modifier.padding(8.dp),feedPost= feedPost.value,
-                onItemStaticClickListener = {newItem ->
-                    val oldFeedPost = feedPost.value.statisticItem
-                    val newFeedPost = oldFeedPost.toMutableList().apply {
-                        replaceAll{oldItem ->
-                    if (oldItem.type == newItem.type){
-                        oldItem.copy(count= oldItem.count+1)
-                }else{
-                    oldItem
-                    }
-                    }
-                    }
-                    feedPost.value = feedPost.value.copy(statisticItem = newFeedPost)
-                })
         }
+        val feedPost = viewModel.feedPost.collectAsState()
+       PostCard(Modifier.padding(8.dp),feedPost= feedPost.value,
+                onItemStaticClickListener = {viewModel.updateCount(it)}
+       )
     }
     }
 

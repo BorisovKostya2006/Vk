@@ -15,18 +15,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
 import com.example.vk.ui.theme.VkTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         setContent {
             VkTheme {
                 Box(modifier = Modifier.fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
                     .padding(8.dp)
                     ) {
-                    MainScreen()
+                    MainScreen(viewModel)
                 }
             }
         }
