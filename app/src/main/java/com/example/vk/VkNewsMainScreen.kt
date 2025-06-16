@@ -1,6 +1,5 @@
 package com.example.vk
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.Surface
@@ -24,24 +23,29 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import java.nio.file.Files.delete
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.example.vk.navigation.AppNavGraph
 
 @Composable
 fun MainScreen(viewModel : MainViewModel){
+
+    val navHostController = rememberNavController()
    Scaffold(
         bottomBar = {
             NavigationBar (
                 containerColor = MaterialTheme.colorScheme.background,
-
             ){
+                val navBackStackEntry = navHostController.currentBackStackEntryAsState()
+                val currentRout = navBackStackEntry.value?.destination?.route
                 val navigationItems = listOf(NavigationItem.Home,NavigationItem.Profile, NavigationItem.Favourite)
                 val indexSelectedPosition = remember{
                     mutableStateOf(0)
                 }
                 navigationItems.forEachIndexed { index, item ->
                     NavigationBarItem(
-                        selected = indexSelectedPosition.value == index,
-                        onClick = {indexSelectedPosition.value = index},
+                        selected = currentRout == item.screen.route,
+                        onClick = {navHostController.navigate(item.screen.route)},
                         icon = {
                             Icon(
                                 imageVector = item.icon,
@@ -61,37 +65,53 @@ fun MainScreen(viewModel : MainViewModel){
             }
         }
     ) { padding ->
+       val feedPosts = FeedPost()
+       AppNavGraph(
+           navController = navHostController,
+           newsScreenContent ={HomeScreen(viewModel)}
+           ,
+           favouriteScreenContent = { Text(text = "Favourite") },
+           profileScreenContent = {Text(text = "Profile")}
+       )
         Surface(modifier = Modifier.padding(padding), color = MaterialTheme.colorScheme.background) {
         }
-        val feedPost = viewModel.feedPosts.collectAsState()
-       LazyColumn(contentPadding = PaddingValues(
-           end = 8.dp,
-           start = 8.dp,
-           bottom = 72.dp,
-           top = 16.dp
-       ),
-           verticalArrangement = Arrangement.spacedBy(8.dp)) {//Между элементами
-           items(items = feedPost.value, key ={it.id})
-           {feedPost ->
-               val dismissState = rememberSwipeToDismissBoxState()
-               if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
-                   viewModel.removePost(feedPost)
-               }
-               SwipeToDismissBox(
-                   modifier = Modifier.animateItem(),
-                   state = dismissState,
-                   backgroundContent = {},
-                   enableDismissFromStartToEnd = false,
-                   enableDismissFromEndToStart = true
-               ) {
-                   PostCard(Modifier.padding(8.dp),feedPost= feedPost,
-                       onItemStaticClickListener = {statistics ->
-                           viewModel.updateCount(feedPost, statistics)}
-                   )
-               }
-           }
+
        }
 
     }
+
+@Composable
+fun HomeScreen(viewModel: MainViewModel){
+    val feedPost = viewModel.feedPosts.collectAsState()
+    LazyColumn(contentPadding = PaddingValues(
+        end = 8.dp,
+        start = 8.dp,
+        bottom = 72.dp,
+        top = 16.dp
+    ),
+        verticalArrangement = Arrangement.spacedBy(8.dp)) {//Между элементами
+        items(items = feedPost.value, key = { it.id })
+        { feedPost ->
+            val dismissState = rememberSwipeToDismissBoxState()
+            if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
+                viewModel.removePost(feedPost)
+            }
+            SwipeToDismissBox(
+                modifier = Modifier.animateItem(),
+                state = dismissState,
+                backgroundContent = {},
+                enableDismissFromStartToEnd = false,
+                enableDismissFromEndToStart = true
+            ) {
+                PostCard(
+                    Modifier.padding(8.dp), feedPost = feedPost,
+                    onItemStaticClickListener = { statistics ->
+                        viewModel.updateCount(feedPost, statistics)
+                    }
+                )
+            }
+        }
+
     }
+}
 
