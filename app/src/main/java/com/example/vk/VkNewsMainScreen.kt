@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.vk.navigation.AppNavGraph
+import com.example.vk.navigation.Screen
 
 @Composable
 fun MainScreen(viewModel : MainViewModel){
@@ -47,6 +48,7 @@ fun MainScreen(viewModel : MainViewModel){
                         selected = currentRout == item.screen.route,
                         onClick = {navHostController.navigate(item.screen.route){
                             launchSingleTop = true
+                            popUpTo(Screen.ROUTE_NAVIGATION_NEWS)
                         }
                                   },
                         icon = {
