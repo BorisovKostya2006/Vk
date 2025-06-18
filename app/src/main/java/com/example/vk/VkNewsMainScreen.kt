@@ -45,7 +45,10 @@ fun MainScreen(viewModel : MainViewModel){
                 navigationItems.forEachIndexed { index, item ->
                     NavigationBarItem(
                         selected = currentRout == item.screen.route,
-                        onClick = {navHostController.navigate(item.screen.route)},
+                        onClick = {navHostController.navigate(item.screen.route){
+                            launchSingleTop = true
+                        }
+                                  },
                         icon = {
                             Icon(
                                 imageVector = item.icon,
@@ -65,7 +68,6 @@ fun MainScreen(viewModel : MainViewModel){
             }
         }
     ) { padding ->
-       val feedPosts = FeedPost()
        AppNavGraph(
            navController = navHostController,
            newsScreenContent ={HomeScreen(viewModel)}
