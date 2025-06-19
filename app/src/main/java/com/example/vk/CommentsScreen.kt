@@ -1,5 +1,6 @@
 package com.example.vk
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -50,6 +51,9 @@ fun CommentsScreen(viewModelComments: ViewModelComments, feedPost: FeedPost) {
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = null
                         )
+                    }
+                    BackHandler {
+                        viewModelComments.closeComments()
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(  // Используем colors
