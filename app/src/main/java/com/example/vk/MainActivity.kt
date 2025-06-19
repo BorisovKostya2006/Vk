@@ -11,22 +11,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
-import com.example.vk.domain.MainViewModel
+import com.example.vk.domain.NewsFeedViewModel
 import com.example.vk.domain.ViewModelComments
 import com.example.vk.ui.theme.VkTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val viewModel = ViewModelProvider(this)[MainViewModel::class.java]
-        val viewModelComments = ViewModelProvider(this)[ViewModelComments::class.java]
         setContent {
             VkTheme {
                 Box(modifier = Modifier.fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
                     .padding(8.dp)
                     ) {
-                   MainScreen(viewModel, viewModelComments)
+                   MainScreen()
 
                 }
             }

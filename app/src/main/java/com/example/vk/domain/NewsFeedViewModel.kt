@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class MainViewModel : ViewModel() {
+class NewsFeedViewModel : ViewModel() {
     private val sourceList = mutableListOf<FeedPost>().apply {
         repeat(10){
             add(FeedPost(id = it))

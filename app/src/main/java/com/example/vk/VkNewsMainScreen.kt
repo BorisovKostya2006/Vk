@@ -21,20 +21,20 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.vk.domain.MainViewModel
+import com.example.vk.domain.NewsFeedViewModel
 import com.example.vk.domain.NavigationItem
 import com.example.vk.domain.ViewModelComments
 import com.example.vk.navigation.AppNavGraph
 import com.example.vk.navigation.NavigationState
 
 @Composable
-fun MainScreen(viewModel: MainViewModel, viewModelComments: ViewModelComments) {
+fun MainScreen() {
     val navigationState = NavigationState(rememberNavController())
+    val viewModelComments : ViewModelComments = viewModel()
     Scaffold(
         bottomBar = {
             NavigationBar(
@@ -72,7 +72,7 @@ fun MainScreen(viewModel: MainViewModel, viewModelComments: ViewModelComments) {
     ) { padding ->
         AppNavGraph(
             navController = navigationState.navHostController as NavHostController,
-            newsScreenContent = { HomeScreen(viewModel,viewModelComments) },
+            newsScreenContent = { HomeScreen(viewModelComments) },
             favouriteScreenContent = { Text(text = "Favourite") },
             profileScreenContent = { Text(text = "Profile") }
         )
@@ -90,8 +90,9 @@ fun MainScreen(viewModel: MainViewModel, viewModelComments: ViewModelComments) {
 }
 
 @Composable
-fun HomeScreen(viewModel: MainViewModel, viewModelComments: ViewModelComments) {
-    val feedPost = viewModel.feedPosts.collectAsState()
+fun HomeScreen(viewModelComments : ViewModelComments) {
+    val viewModelNewsFeed : NewsFeedViewModel = viewModel()
+    val feedPost = viewModelNewsFeed.feedPosts.collectAsState()
     LazyColumn(
         contentPadding = PaddingValues(
             end = 8.dp,
@@ -105,7 +106,7 @@ fun HomeScreen(viewModel: MainViewModel, viewModelComments: ViewModelComments) {
         { feedPost ->
             val dismissState = rememberSwipeToDismissBoxState()
             if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
-                viewModel.removePost(feedPost)
+                viewModelNewsFeed.removePost(feedPost)
             }
             SwipeToDismissBox(
                 modifier = Modifier.animateItem(),
@@ -120,7 +121,7 @@ fun HomeScreen(viewModel: MainViewModel, viewModelComments: ViewModelComments) {
                         if (statistics.type == StatisticType.COMMENTS){
                             viewModelComments.showComments(feedPost)
                         }else{
-                            viewModel.updateCount(feedPost, statistics)
+                            viewModelNewsFeed.updateCount(feedPost, statistics)
                         }
 
                     }
