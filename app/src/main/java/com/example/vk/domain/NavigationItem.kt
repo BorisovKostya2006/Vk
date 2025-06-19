@@ -1,10 +1,11 @@
-package com.example.vk
+package com.example.vk.domain
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.example.vk.R
 import com.example.vk.navigation.Screen
 
 sealed class NavigationItem(val titleResId : Int, val icon : ImageVector, val screen : Screen ) {

@@ -1,6 +1,10 @@
 package com.example.vk
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -8,19 +12,28 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.vk.domain.MainViewModel
+import com.example.vk.domain.NavigationItem
+import com.example.vk.domain.ViewModelComments
 import com.example.vk.navigation.AppNavGraph
 import com.example.vk.navigation.NavigationState
 
 @Composable
-fun MainScreen(viewModel: MainViewModel) {
+fun MainScreen(viewModel: MainViewModel, viewModelComments: ViewModelComments) {
     val navigationState = NavigationState(rememberNavController())
     Scaffold(
         bottomBar = {
@@ -59,7 +72,7 @@ fun MainScreen(viewModel: MainViewModel) {
     ) { padding ->
         AppNavGraph(
             navController = navigationState.navHostController as NavHostController,
-            newsScreenContent = { HomeScreen(viewModel) },
+            newsScreenContent = { HomeScreen(viewModel,viewModelComments) },
             favouriteScreenContent = { Text(text = "Favourite") },
             profileScreenContent = { Text(text = "Profile") }
         )
@@ -67,6 +80,9 @@ fun MainScreen(viewModel: MainViewModel) {
             modifier = Modifier.padding(padding),
             color = MaterialTheme.colorScheme.background
         ) {
+            if (viewModelComments.screenComments.value){
+                CommentsScreen(viewModelComments,viewModelComments.feedPost.value)
+            }
         }
 
     }
@@ -74,40 +90,44 @@ fun MainScreen(viewModel: MainViewModel) {
 }
 
 @Composable
-fun HomeScreen(viewModel: MainViewModel) {
+fun HomeScreen(viewModel: MainViewModel, viewModelComments: ViewModelComments) {
     val feedPost = viewModel.feedPosts.collectAsState()
-    CommentsScreen(feedPost.value.get(0))
-//    LazyColumn(
-//        contentPadding = PaddingValues(
-//            end = 8.dp,
-//            start = 8.dp,
-//            bottom = 72.dp,
-//            top = 16.dp
-//        ),
-//        verticalArrangement = Arrangement.spacedBy(8.dp)
-//    ) {//Между элементами
-//        items(items = feedPost.value, key = { it.id })
-//        { feedPost ->
-//            val dismissState = rememberSwipeToDismissBoxState()
-//            if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
-//                viewModel.removePost(feedPost)
-//            }
-//            SwipeToDismissBox(
-//                modifier = Modifier.animateItem(),
-//                state = dismissState,
-//                backgroundContent = {},
-//                enableDismissFromStartToEnd = false,
-//                enableDismissFromEndToStart = true
-//            ) {
-//                PostCard(
-//                    Modifier.padding(8.dp), feedPost = feedPost,
-//                    onItemStaticClickListener = { statistics ->
-//                        viewModel.updateCount(feedPost, statistics)
-//                    }
-//                )
-//            }
-//        }
-//
-//    }
+    LazyColumn(
+        contentPadding = PaddingValues(
+            end = 8.dp,
+            start = 8.dp,
+            bottom = 72.dp,
+            top = 16.dp
+        ),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {//Между элементами
+        items(items = feedPost.value, key = { it.id })
+        { feedPost ->
+            val dismissState = rememberSwipeToDismissBoxState()
+            if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
+                viewModel.removePost(feedPost)
+            }
+            SwipeToDismissBox(
+                modifier = Modifier.animateItem(),
+                state = dismissState,
+                backgroundContent = {},
+                enableDismissFromStartToEnd = false,
+                enableDismissFromEndToStart = true
+            ) {
+                PostCard(
+                    Modifier.padding(8.dp), feedPost = feedPost,
+                    onItemStaticClickListener = { statistics ->
+                        if (statistics.type == StatisticType.COMMENTS){
+                            viewModelComments.showComments(feedPost)
+                        }else{
+                            viewModel.updateCount(feedPost, statistics)
+                        }
+
+                    }
+                )
+            }
+        }
+
+    }
 }
 

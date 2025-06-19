@@ -1,4 +1,8 @@
-package com.example.vk
+package com.example.vk.domain
+
+import com.example.vk.R
+import com.example.vk.StatisticItem
+import com.example.vk.StatisticType
 
 data class FeedPost (
     val id : Int = 0,
@@ -7,8 +11,10 @@ data class FeedPost (
     val groupName : String = "/dev/null",
     val iconGroup : Int = R.drawable.computer,
     val contentImage : Int = R.drawable.kod,
-    val statisticItem: List<StatisticItem> = listOf(StatisticItem(count = 960, type = StatisticType.VIEWS),
+    val statisticItem: List<StatisticItem> = listOf(
+        StatisticItem(count = 960, type = StatisticType.VIEWS),
         StatisticItem(count = 99, type = StatisticType.SHARES),
         StatisticItem(count = 21, type = StatisticType.COMMENTS),
-        StatisticItem(count = 23, type = StatisticType.LIKE))
+        StatisticItem(count = 23, type = StatisticType.LIKE)
+    )
 )

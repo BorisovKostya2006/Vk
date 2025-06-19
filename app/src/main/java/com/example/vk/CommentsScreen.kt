@@ -27,11 +27,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.vk.domain.FeedPost
+import com.example.vk.domain.ViewModelComments
 
 @OptIn(ExperimentalMaterial3Api::class)
 
 @Composable
-fun CommentsScreen(feedPost: FeedPost) {
+fun CommentsScreen(viewModelComments: ViewModelComments, feedPost: FeedPost) {
     val comments: MutableList<Comment> = mutableListOf()
     comments.apply {
         repeat(150) {
@@ -41,9 +43,9 @@ fun CommentsScreen(feedPost: FeedPost) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Comments for FeedPost Id: ${feedPost.id}") },
+                title = { Text("Comments for FeedPost Id:${feedPost.id}") },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = {viewModelComments.closeComments()}) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = null

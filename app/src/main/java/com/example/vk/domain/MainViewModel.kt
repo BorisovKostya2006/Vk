@@ -1,6 +1,7 @@
-package com.example.vk
+package com.example.vk.domain
 
 import androidx.lifecycle.ViewModel
+import com.example.vk.StatisticItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
