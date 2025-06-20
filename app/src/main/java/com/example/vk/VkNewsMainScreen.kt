@@ -26,10 +26,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.vk.domain.NewsFeedViewModel
-import com.example.vk.domain.NavigationItem
+import com.example.vk.navigation.NavigationItem
 import com.example.vk.domain.ViewModelComments
 import com.example.vk.navigation.AppNavGraph
 import com.example.vk.navigation.NavigationState
+import com.example.vk.navigation.Screen
 
 @Composable
 fun MainScreen() {
@@ -74,14 +75,19 @@ fun MainScreen() {
             navController = navigationState.navHostController as NavHostController,
             newsScreenContent = { HomeScreen(viewModelComments) },
             favouriteScreenContent = { Text(text = "Favourite") },
-            profileScreenContent = { Text(text = "Profile") }
+            profileScreenContent = { Text(text = "Profile") },
+            commentsScreenContent = {CommentsScreen(
+                viewModelComments,
+                viewModelComments.feedPost.value
+            )
+            }
         )
         Surface(
             modifier = Modifier.padding(padding),
             color = MaterialTheme.colorScheme.background
         ) {
             if (viewModelComments.screenComments.value){
-                CommentsScreen(viewModelComments,viewModelComments.feedPost.value)
+                navigationState.navigationTo(Screen.ROUTE_NAVIGATION_COMMENTS)
             }
         }
 
